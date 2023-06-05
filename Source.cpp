@@ -31,8 +31,7 @@
 #define BACKGROUND_FILE "snake.png"
 using namespace std;
 
-const int height = 600,
-width = 800; //wymiary okna
+const int height = 600,width = 800; //wymiary okna
 
 bool generateCoins(int snakeX[], int snakeY[], int coinX, int coinY, int score) {
     bool overlap = false;
@@ -61,7 +60,7 @@ int main() {
     al_install_keyboard();
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
     ALLEGRO_TIMER* blinkTimer = al_create_timer(0.5); // New timer for blinking
-    ALLEGRO_TIMER* blinkTimer2 = al_create_timer(0.2); // New timer for blinking
+ 
     ALLEGRO_SAMPLE* MUZ = NULL; //inicjacja muzyczki zbierania pieniazkow
 
     const float FPS = 60.0;
@@ -93,14 +92,13 @@ int main() {
     al_register_event_source(queue, al_get_display_event_source(display));
     al_register_event_source(queue, al_get_timer_event_source(timer));
     al_register_event_source(queue, al_get_timer_event_source(blinkTimer)); // Register the blinkTimer
-    al_register_event_source(queue, al_get_timer_event_source(blinkTimer2)); // Register the blinkTimer
     bool redraw = true;
     bool blink = false; // Variable to control the blinking state
     ALLEGRO_EVENT event;
 
     al_start_timer(timer);
     al_start_timer(blinkTimer); // Start the blinkTimer
-    al_start_timer(blinkTimer2);
+   
 
     while (1) { //petla do wyswietlania ekranu startowego
         al_wait_for_event(queue, &event);
@@ -148,8 +146,7 @@ int main() {
         // Close the file
         scoreFile.close(); //zamykamy plik
 
-        const float FPS = 60.0;
-        const float frameFPS = 15.0;
+        
 
         if (!al_init()) return -1;
 
@@ -192,30 +189,22 @@ int main() {
         ALLEGRO_BITMAP* body = al_load_bitmap("body.png");
         ALLEGRO_BITMAP* coin1 = al_load_bitmap("coinPic.png");
 
-        ALLEGRO_TIMER* timer = al_create_timer(1.0 / 10);
-        ALLEGRO_TIMER* frameTimer = al_create_timer(1.0 / frameFPS);
-        ALLEGRO_TIMER* VREME = al_create_timer(1);
+        ALLEGRO_TIMER* timer = al_create_timer(1.0/10.0);//szybkosc gry
+        ALLEGRO_TIMER* TimeCounter = al_create_timer(1);//licznik czasu w grze
         ALLEGRO_KEYBOARD_STATE keyState;
 
         ALLEGRO_EVENT_QUEUE* event_queue = al_create_event_queue();
         al_register_event_source(event_queue, al_get_keyboard_event_source());
         al_register_event_source(event_queue, al_get_timer_event_source(timer));
-        al_register_event_source(event_queue, al_get_timer_event_source(frameTimer));
-        al_register_event_source(event_queue, al_get_timer_event_source(VREME));
+        al_register_event_source(event_queue, al_get_timer_event_source(TimeCounter));
         al_register_event_source(event_queue, al_get_display_event_source(display));
 
         al_start_timer(timer);
-        al_start_timer(frameTimer);
-        al_start_timer(VREME);
+        al_start_timer(TimeCounter);
 
-        const int maxF = 8;
-        int curF = 0;
-        int frameC = 0;
-        int frameD = 2;
-        int frameW = 40;
-        int frameH = 40;
-        int timeS = 0;
-        int timeF = 0;
+   
+        int timeS = 0;//czas poczatkowy
+        int timeF; //czas do wyswietlenia na ekranie koncowym
 
         enum Direction {
             DOWN,
@@ -230,17 +219,17 @@ int main() {
         int lastY;
 
         coin.x = 40 * (rand() % 20);
-        coin.y = 40 * (rand() % 15);
+        coin.y = 40 * (rand() % 14) + 40;//poczatkowe miejsce pieniazka
 
         int snakeT[300], snakeX[300], snakeY[300];
         for (int i = 0; i < 300; i++) {
             snakeT[i] = 0;
             snakeX[i] = 0;
             snakeY[i] = 0;
-        }
+        }//czyszczenie tablic
 
-        bool menu = false;
-        bool dead = false;
+        bool menu = false;//czy menu jest wyswietlane
+        bool dead = false;//czy jest sie martwym
         while (!done) {
 
             lastX = x;
@@ -263,7 +252,7 @@ int main() {
                 done = true;
 
             if (events.type == ALLEGRO_EVENT_TIMER) {
-                if (events.timer.source == VREME) timeS++;
+                if (events.timer.source == TimeCounter) timeS++;//liczenie czasu
                 if (events.timer.source == timer) {
 
                     al_get_keyboard_state(&keyState);
@@ -276,7 +265,7 @@ int main() {
                     else if (al_key_down(&keyState, ALLEGRO_KEY_DOWN) && dir != UP)
                         dir = DOWN;
                     else if (al_key_down(&keyState, ALLEGRO_KEY_A))
-                        score++;
+                        score++;//lekka pomoc do testow
                     else if (al_key_down(&keyState, ALLEGRO_KEY_ENTER) && menu == true)
                         menu = false, score = 1, timeS = 0, x = 400, y = 320;
                     if (menu == false) {
@@ -325,7 +314,7 @@ int main() {
                         while (generateCoins(snakeX, snakeY, coin.x, coin.y, score) == 1) {
                             coin.x = 40 * (rand() % 20);
                             coin.y = 40 * (rand() % 14) + 40;
-                        }
+                        }//generowanie nowego pieniazka tam gdzie nie ma weza
 
                         snakeT[score] = 1;
                     }
