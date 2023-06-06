@@ -1,3 +1,5 @@
+//Gerard Adamiak, Aleksandra Dudzic
+
 #include <allegro5\allegro5.h>
 
 #include <iostream>
@@ -263,9 +265,7 @@ int main() {
                     else if (al_key_down(&keyState, ALLEGRO_KEY_UP) && dir != DOWN)
                         dir = UP;
                     else if (al_key_down(&keyState, ALLEGRO_KEY_DOWN) && dir != UP)
-                        dir = DOWN;
-                    else if (al_key_down(&keyState, ALLEGRO_KEY_A))
-                        score++;//lekka pomoc do testow
+                        dir = DOWN; 
                     else if (al_key_down(&keyState, ALLEGRO_KEY_ENTER) && menu == true)
                         menu = false, score = 1, timeS = 0, x = 400, y = 320;
                     if (menu == false) {
